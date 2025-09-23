@@ -1,5 +1,5 @@
 {
-  "name": "my-inspira-app",
+  "name": "amethyst-official",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -29,5 +29,6 @@
     "typescript": "~5.8.3",
     "vite": "^7.1.7",
     "vue-tsc": "^3.0.7"
-  }
+  },
+  "license": "GPL-v3"
 }

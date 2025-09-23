@@ -1,7 +1,7 @@
 <template>
   <div
     ref="ctnDom"
-    :class="cn('block size-full', props?.class)"
+    :class="cn('block h-full w-full', props?.class)"
   ></div>
 </template>
 
@@ -62,14 +62,15 @@ const frag = `
 
 function resize() {
   if (!ctnDom.value) return;
-  const scale = 1;
-  renderer.setSize(ctnDom.value.offsetWidth * scale, ctnDom.value.offsetHeight * scale);
+  const { clientWidth, clientHeight } = ctnDom.value;
+  if (!clientWidth || !clientHeight) return;
+
+  renderer.setSize(clientWidth, clientHeight);
+
   if (mesh) {
-    mesh.program.uniforms.uResolution.value = [
-      gl.canvas.width,
-      gl.canvas.height,
-      gl.canvas.width / gl.canvas.height,
-    ];
+    const width = gl.canvas.width || 1;
+    const height = gl.canvas.height || 1;
+    mesh.program.uniforms.uResolution.value = [width, height, width / height];
   }
 }
 
@@ -81,15 +82,15 @@ function update(t: number) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!ctnDom.value) return;
 
-  renderer = new Renderer();
+  renderer = new Renderer({ dpr: Math.min(window.devicePixelRatio, 2) });
   gl = renderer.gl;
-  gl.clearColor(1, 1, 1, 1);
+  gl.clearColor(0, 0, 0, 0);
 
-  window.addEventListener("resize", resize, false);
-  resize();
+  ctnDom.value.appendChild(gl.canvas);
+  await nextTick();
 
   const geometry = new Triangle(gl);
 
@@ -106,9 +107,9 @@ onMounted(() => {
   });
 
   mesh = new Mesh(gl, { geometry, program });
+  resize();
+  window.addEventListener("resize", resize, false);
   animateId = requestAnimationFrame(update);
-
-  ctnDom.value.appendChild(gl.canvas);
 });
 
 onUnmounted(() => {
@@ -119,6 +120,4 @@ onUnmounted(() => {
   }
   gl?.getExtension("WEBGL_lose_context")?.loseContext();
 });
-await nextTick();
-console.log("ctnDom size:", ctnDom.value?.offsetWidth, ctnDom.value?.offsetHeight);
 </script>
