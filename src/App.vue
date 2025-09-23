@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { useColorMode } from "@vueuse/core";
 import ClientReviews from "@/components/ClientReviews.vue";
+import CoolShimmerButton from "@/components/CoolShimmerButton.vue";
 import { FallingStarsBg } from "@/components/ui/bg-falling-stars";
 
 const colorMode = useColorMode();
@@ -34,8 +35,7 @@ const isDark = computed(() => colorMode.value === "dark");
           Amethyst
         </h1>
         <p class="text-pretty text-lg text-slate-600 md:text-xl dark:text-slate-300">
-          We build real-world AI applications, craft unforgettable Minecraft experiences,
-          and weave the connectivity that keeps every world in sync.
+          A studio dedicated to AI application deployment, Minecraft entertainment, and online networking.
         </p>
         <div class="flex flex-col items-center gap-3 sm:flex-row">
           <a
@@ -64,6 +64,18 @@ const isDark = computed(() => colorMode.value === "dark");
         </h2>
       </header>
       <ClientReviews />
+    </section>
+
+    <section class="relative z-[1] mx-auto w-full max-w-4xl px-6 pb-16">
+      <header class="mb-10 text-center">
+        <p class="text-sm uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">
+          Community
+        </p>
+        <h2 class="mt-3 text-3xl font-semibold text-slate-900 md:text-4xl dark:text-white">
+          Join our Community
+        </h2>
+      </header>
+      <CoolShimmerButton />
     </section>
   </main>
 </template>
