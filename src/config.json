@@ -1,39 +1,39 @@
 {
   "reviews": [
     {
-      "name": "Alex",
-      "username": "@alex_crafter",
-      "body": "这个Minecraft服务器太棒了！AI NPC的互动让整个世界都活了起来，而且组网联机非常流畅，和朋友一起玩毫无延迟。",
+      "name": "Jeffrey",
+      "username": "@Jeffrey",
+      "body": "AmethystCraft凭借着优越的研发能力开发了多服消息互通系统，并实现了多服消息互通，让玩家可以在不同服务器之间进行交互。",
       "img": "https://avatar.vercel.sh/alex"
     },
     {
       "name": "Ben",
       "username": "@ben_builder",
-      "body": "服务器的AI应用令人印象深刻，特别是AI辅助建筑的功能，极大地提升了建造效率。联机功能也很稳定，轻松就能和全球的玩家组队。",
+      "body": "Amethyst对于AI落地，可以说制作了很多的Prodcts",
       "img": "https://avatar.vercel.sh/ben"
     },
     {
       "name": "Cathy",
       "username": "@cathy_explorer",
-      "body": "第一次在Minecraft里体验到如此智能的AI怪物，它们会策略性地攻击，非常有挑战性。组网功能做得很好，让我和朋友们能无缝联机探险。",
+      "body": "Amethystt在中国，与中国合作商智穗互联共同打造了低延迟的联机网络（Tip：P2P技术，以用户实际网络状况为准）",
       "img": "https://avatar.vercel.sh/cathy"
     },
     {
       "name": "David",
       "username": "@david_gamer",
-      "body": "将AI技术应用到Minecraft服务器中是个天才般的想法！AI生成的任务和剧情非常有趣。网络连接优化得很好，和朋友们组队刷怪毫无压力。",
+      "body": "Amethystt拥有着强大的开发能力，这归功于“人+AI”的协作方式",
       "img": "https://avatar.vercel.sh/david"
     },
     {
       "name": "Eva",
       "username": "@eva_pro",
-      "body": "这个服务器的AI落地应用是我见过最棒的，AI商人会根据市场动态调整价格。组网联机功能也非常强大，支持大规模玩家在线，活动体验极佳。",
+      "body": "Amethyst逆向过CopilotArena并开源，对我的逆向学习起到了极高的作用",
       "img": "https://avatar.vercel.sh/eva"
     },
     {
       "name": "Frank",
       "username": "@frank_adventurer",
-      "body": "服务器的稳定性和AI创新功能让我非常惊喜。尤其是AI驱动的生态系统，让游戏世界更加真实。和朋友组网联机也非常方便，一键就能加入队伍。",
+      "body": "联机网络延迟的体验使我感觉非常爽",
       "img": "https://avatar.vercel.sh/frank"
     }
   ],
