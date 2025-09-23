@@ -111,10 +111,10 @@ const trackStyle = computed(() => ({
   gap: 1rem;
   border-radius: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--background) 90%, transparent);
   padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  color: #1e293b;
+  color: color-mix(in srgb, var(--foreground) 88%, transparent);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   contain: layout paint;
   will-change: transform;
@@ -141,33 +141,37 @@ const trackStyle = computed(() => ({
 
 .review-card__name {
   font-weight: 600;
-  color: inherit;
+  color: color-mix(in srgb, var(--foreground) 96%, transparent);
 }
 
 .review-card__username {
   font-size: 0.85rem;
-  color: rgba(30, 41, 59, 0.6);
+  color: color-mix(in srgb, var(--foreground) 70%, transparent);
 }
 
 .review-card__body {
   font-size: 0.95rem;
   line-height: 1.6;
-  color: rgba(30, 41, 59, 0.85);
+  color: color-mix(in srgb, var(--foreground) 90%, transparent);
 }
 
 :global(.dark) .review-card {
   border-color: rgba(255, 255, 255, 0.16);
-  background: rgba(15, 23, 42, 0.78);
-  color: #e2e8f0;
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+  color: color-mix(in srgb, var(--foreground) 92%, transparent);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.4);
 }
 
 :global(.dark) .review-card__username {
-  color: rgba(226, 232, 240, 0.6);
+  color: color-mix(in srgb, var(--foreground) 70%, transparent);
+}
+
+:global(.dark) .review-card__name {
+  color: color-mix(in srgb, var(--foreground) 98%, transparent);
 }
 
 :global(.dark) .review-card__body {
-  color: rgba(226, 232, 240, 0.9);
+  color: color-mix(in srgb, var(--foreground) 92%, transparent);
 }
 
 @keyframes marquee {

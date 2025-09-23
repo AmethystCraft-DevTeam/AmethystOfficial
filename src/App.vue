@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useColorMode } from "@vueuse/core";
+import ClientReviews from "@/components/ClientReviews.vue";
 import CoolShimmerButton from "@/components/CoolShimmerButton.vue";
 import { FallingStarsBg } from "@/components/ui/bg-falling-stars";
 
@@ -51,6 +52,18 @@ const isDark = computed(() => colorMode.value === "dark");
           </a>
         </div>
       </div>
+    </section>
+
+    <section class="relative z-[1] mx-auto w-full max-w-6xl px-6">
+      <header class="mb-10 text-center">
+        <p class="text-sm uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">
+          Voices from the Multiverse
+        </p>
+        <h2 class="mt-3 text-3xl font-semibold text-slate-900 md:text-4xl dark:text-white">
+          Trusted by creators, engineers, and adventurers alike
+        </h2>
+      </header>
+      <ClientReviews />
     </section>
 
     <section class="relative z-[1] mx-auto w-full max-w-4xl px-6 pb-16">
