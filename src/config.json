@@ -38,8 +38,7 @@
     }
   ],
   "reviewsMarquee": {
-    "duration": "30s",
-    "repeat": 2,
+    "duration": "90s",
     "gap": "2.5rem"
   }
 }

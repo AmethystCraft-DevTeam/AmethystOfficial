@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { cn } from "@/lib/utils";
 
 interface Star {
@@ -24,14 +24,18 @@ const props = withDefaults(
   }>(),
   {
     color: "#FFF",
-    count: 200,
+    count: 120,
   },
 );
 
 const starsCanvas = ref<HTMLCanvasElement | null>(null);
-let perspective: number = 0;
+let perspective = 0;
 let stars: Star[] = [];
 let ctx: CanvasRenderingContext2D | null = null;
+let frameId: number | null = null;
+let isVisible = true;
+
+const observer = ref<IntersectionObserver | null>(null);
 
 onMounted(() => {
   const canvas = starsCanvas.value;
@@ -53,7 +57,26 @@ onMounted(() => {
     });
   }
 
+  observer.value = new IntersectionObserver(
+    (entries) => {
+      isVisible = entries[0]?.isIntersecting ?? false;
+      if (isVisible && frameId === null) {
+        animate();
+      }
+    },
+    { threshold: 0.1 },
+  );
+
+  observer.value.observe(canvas);
   animate(); // Start animation
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", resizeCanvas);
+  if (frameId !== null) {
+    cancelAnimationFrame(frameId);
+  }
+  observer.value?.disconnect();
 });
 
 function hexToRgb() {
@@ -138,11 +161,16 @@ function animate() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas for each frame
 
-  stars.forEach((star) => {
+  stars.forEach((star, index) => {
+    // Skip every other star when offscreen to reduce work but keep basic motion
+    if (!isVisible && index % 2 === 1) {
+      return;
+    }
+
     drawStar(star);
 
     // Move star towards the screen (decrease z)
-    star.z -= star.speed;
+    star.z -= isVisible ? star.speed : star.speed * 0.35;
 
     // Reset star when it reaches the viewer (z = 0)
     if (star.z <= 0) {
@@ -152,7 +180,7 @@ function animate() {
     }
   });
 
-  requestAnimationFrame(animate); // Continue animation
+  frameId = requestAnimationFrame(animate); // Continue animation
 }
 
 // Set canvas to full screen
