@@ -8,7 +8,7 @@
         <p class="whitespace-pre-wrap text-7xl font-semibold tracking-tight text-black dark:text-white">
           <NumberTicker :value="interceptedTotal" :decimal-places="0" />
         </p>
-        <span class="mb-2 text-xl text-slate-600 dark:text-slate-300">Blocked high-risk sessions</span>
+        <span class="mb-2 text-xl text-slate-600 dark:text-slate-300">Processed sessions</span>
       </div>
       <div class="flex flex-wrap items-center justify-center gap-3 text-sm">
         <span class="flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
@@ -70,6 +70,26 @@ const lastUpdated = ref<Date | null>(null);
 
 const statsApiUrl = "https://open.amethyst.ltd/bot/groupchk/stats" as const;
 
+function scheduleIdle(cb: () => void, timeout = 2000) {
+  if (typeof window === "undefined") {
+    cb();
+    return;
+  }
+
+  const idleWindow = window as Window & {
+    requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+  };
+
+  if (idleWindow.requestIdleCallback) {
+    idleWindow.requestIdleCallback(
+      () => cb(),
+      { timeout },
+    );
+  } else {
+    window.setTimeout(cb, Math.min(timeout, 600));
+  }
+}
+
 async function fetchStats() {
   try {
     fetchError.value = false;
@@ -98,7 +118,9 @@ async function fetchStats() {
   }
 }
 
-onMounted(fetchStats);
+onMounted(() => {
+  scheduleIdle(fetchStats);
+});
 
 const lastUpdatedLabel = computed(() => {
   if (!lastUpdated.value) return "just now";
@@ -116,7 +138,7 @@ const statCards = computed(() => [
     id: "processed",
     label: "Processed",
     value: processedTotal.value,
-    description: "Total inbound requests analyzed by A2Bot risk engines in this period.",
+    description: "Processed malicious sessions to protect your user groups.",
   },
   {
     id: "pending",

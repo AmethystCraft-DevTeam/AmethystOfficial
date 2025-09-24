@@ -10,7 +10,12 @@
           class="review-card"
         >
           <div class="review-card__header">
-            <img :src="review.img" :alt="review.name" class="review-card__avatar" />
+            <img
+              :src="review.img"
+              :alt="review.name"
+              class="review-card__avatar"
+              loading="lazy"
+            />
             <div>
               <p class="review-card__name">{{ review.name }}</p>
               <p class="review-card__username">{{ review.username }}</p>
@@ -29,7 +34,12 @@
           class="review-card"
         >
           <div class="review-card__header">
-            <img :src="review.img" :alt="review.name" class="review-card__avatar" />
+            <img
+              :src="review.img"
+              :alt="review.name"
+              class="review-card__avatar"
+              loading="lazy"
+            />
             <div>
               <p class="review-card__name">{{ review.name }}</p>
               <p class="review-card__username">{{ review.username }}</p>

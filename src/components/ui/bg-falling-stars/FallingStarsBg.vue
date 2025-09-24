@@ -24,7 +24,7 @@ const props = withDefaults(
   }>(),
   {
     color: "#FFF",
-    count: 120,
+    count: 80,
   },
 );
 
@@ -34,28 +34,21 @@ let stars: Star[] = [];
 let ctx: CanvasRenderingContext2D | null = null;
 let frameId: number | null = null;
 let isVisible = true;
+let prefersReducedMotion = false;
 
 const observer = ref<IntersectionObserver | null>(null);
+let reducedMotionQuery: MediaQueryList | null = null;
 
 onMounted(() => {
   const canvas = starsCanvas.value;
   if (!canvas) return;
 
-  window.addEventListener("resize", resizeCanvas);
-  resizeCanvas(); // Call it initially to set correct size
+  ctx = canvas.getContext("2d");
+  if (!ctx) return;
 
-  perspective = canvas.width / 2;
-  stars = [];
-
-  // Initialize stars
-  for (let i = 0; i < props.count; i++) {
-    stars.push({
-      x: (Math.random() - 0.5) * 2 * canvas.width,
-      y: (Math.random() - 0.5) * 2 * canvas.height,
-      z: Math.random() * canvas.width,
-      speed: Math.random() * 5 + 2, // Speed for falling effect
-    });
-  }
+  window.addEventListener("resize", handleResize, { passive: true });
+  setupReducedMotionListener();
+  handleResize();
 
   observer.value = new IntersectionObserver(
     (entries) => {
@@ -72,11 +65,12 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener("resize", resizeCanvas);
+  window.removeEventListener("resize", handleResize);
   if (frameId !== null) {
     cancelAnimationFrame(frameId);
   }
   observer.value?.disconnect();
+  reducedMotionQuery?.removeEventListener("change", handleReducedMotionChange);
 });
 
 function hexToRgb() {
@@ -107,10 +101,7 @@ function hexToRgb() {
 // Function to draw a star with a sharp line and blurred trail
 function drawStar(star: Star) {
   const canvas = starsCanvas.value;
-  if (!canvas) return;
-
-  ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  if (!canvas || !ctx) return;
 
   const scale = perspective / (perspective + star.z); // 3D perspective scale
   const x2d = canvas.width / 2 + star.x * scale;
@@ -126,9 +117,9 @@ function drawStar(star: Star) {
 
   // Draw blurred trail (longer, with low opacity)
   ctx.save(); // Save current context state for restoring later
-  ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
-  ctx.lineWidth = size * 2.5; // Thicker trail for a blur effect
-  ctx.shadowBlur = 35; // Add blur to the trail
+  ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`;
+  ctx.lineWidth = size * 2; // Thicker trail for a blur effect
+  ctx.shadowBlur = 24; // Add blur to the trail
   ctx.shadowColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.8)`;
   ctx.beginPath();
   ctx.moveTo(x2d, y2d);
@@ -137,7 +128,7 @@ function drawStar(star: Star) {
   ctx.restore(); // Restore context state to remove blur from the main line
 
   // Draw sharp line (no blur)
-  ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.6)`;
+  ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`;
   ctx.lineWidth = size; // The line width is the same as the star's size
   ctx.beginPath();
   ctx.moveTo(x2d, y2d);
@@ -154,10 +145,7 @@ function drawStar(star: Star) {
 // Function to animate the stars
 function animate() {
   const canvas = starsCanvas.value;
-  if (!canvas) return;
-
-  ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  if (!canvas || !ctx) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas for each frame
 
@@ -183,12 +171,62 @@ function animate() {
   frameId = requestAnimationFrame(animate); // Continue animation
 }
 
-// Set canvas to full screen
+// Handle reduced-motion preferences
+function setupReducedMotionListener() {
+  if (typeof window === "undefined") return;
+  reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  prefersReducedMotion = reducedMotionQuery.matches;
+  reducedMotionQuery.addEventListener("change", handleReducedMotionChange);
+}
+
+function handleReducedMotionChange(event: MediaQueryListEvent) {
+  prefersReducedMotion = event.matches;
+  initStars();
+}
+
+function handleResize() {
+  resizeCanvas();
+  initStars();
+}
+
 function resizeCanvas() {
   const canvas = starsCanvas.value;
   if (!canvas) return;
 
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
+  const { clientWidth, clientHeight } = canvas;
+  canvas.width = clientWidth;
+  canvas.height = clientHeight;
+}
+
+function determineStarCount() {
+  const canvas = starsCanvas.value;
+  if (!canvas) return props.count;
+
+  let count = props.count;
+
+  if (window.innerWidth < 768) {
+    count = Math.round(count * 0.55);
+  }
+
+  if (prefersReducedMotion) {
+    count = Math.max(12, Math.round(count * 0.25));
+  }
+
+  return Math.max(24, count);
+}
+
+function initStars() {
+  const canvas = starsCanvas.value;
+  if (!canvas) return;
+
+  perspective = canvas.width / 2;
+  const count = determineStarCount();
+
+  stars = Array.from({ length: count }, () => ({
+    x: (Math.random() - 0.5) * 2 * canvas.width,
+    y: (Math.random() - 0.5) * 2 * canvas.height,
+    z: Math.random() * canvas.width,
+    speed: prefersReducedMotion ? Math.random() * 2 + 1 : Math.random() * 5 + 2,
+  }));
 }
 </script>
