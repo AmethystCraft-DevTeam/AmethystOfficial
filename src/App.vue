@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { useColorMode } from "@vueuse/core";
 import ClientReviews from "@/components/ClientReviews.vue";
 import CoolShimmerButton from "@/components/CoolShimmerButton.vue";
+import A2BotIntercepts from "@/components/A2BotIntercepts.vue";
 import { FallingStarsBg } from "@/components/ui/bg-falling-stars";
 
 const colorMode = useColorMode();
@@ -52,6 +53,18 @@ const isDark = computed(() => colorMode.value === "dark");
           </a>
         </div>
       </div>
+    </section>
+
+    <section class="relative z-[1] mx-auto w-full max-w-6xl px-6">
+      <header class="mb-10 text-center">
+        <p class="text-sm uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">
+          Security Insights
+        </p>
+        <h2 class="mt-3 text-3xl font-semibold text-slate-900 md:text-4xl dark:text-white">
+          A2Bot Interception Overview
+        </h2>
+      </header>
+      <A2BotIntercepts />
     </section>
 
     <section class="relative z-[1] mx-auto w-full max-w-6xl px-6">
