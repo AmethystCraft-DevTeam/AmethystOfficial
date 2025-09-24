@@ -20,7 +20,7 @@
     <section class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
       <div
         v-if="posts.length"
-        class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
+        class="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)]"
       >
         <div class="flex max-h-[600px] flex-col gap-5 overflow-y-auto pr-1">
           <CardSpotlight

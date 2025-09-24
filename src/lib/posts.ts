@@ -22,7 +22,7 @@ const posts: BlogPost[] = Object.entries(postModules).map(([path, rawContent]) =
   const slug = fileName.replace(/\.md$/i, "");
 
   const titleMatch = normalized.match(/^#\s+(.+)$/m);
-  const title = titleMatch?.[1]?.trim() ?? new Date().toISOString();
+  const title = titleMatch?.[1]?.trim() ?? deriveTitleFromFileName(slug) ?? new Date().toISOString();
 
   const excerptSource = normalized
     .replace(/^#\s+.+$/m, "")
@@ -62,6 +62,23 @@ function derivePublishedAt(fileName: string, raw: string): string {
   }
 
   return new Date().toISOString();
+}
+
+function deriveTitleFromFileName(slug: string): string | null {
+  const withoutDate = slug.replace(/^(\d{4})([-_]?\d{2})?([-_]?\d{2})?[-_]?/, "");
+  const segments = withoutDate
+    .split(/[-_]+/)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  if (!segments.length) {
+    const cleaned = slug.replace(/[-_]+/g, " ");
+    return cleaned ? cleaned : null;
+  }
+
+  return segments
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(" ");
 }
 
 function escapeHtml(value: string) {
