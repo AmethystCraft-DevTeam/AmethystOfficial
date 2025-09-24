@@ -49,27 +49,39 @@ function scheduleIdle(cb: () => void, timeout = 1200) {
   }
 }
 
-const activePage = ref<"home" | "blog">(typeof window !== "undefined" ? resolveInitialPage() : "home");
+const initialRoute = typeof window !== "undefined" ? parseHash() : { page: "home" as const, slug: null };
+const activePage = ref<"home" | "blog">(initialRoute.page);
+const activePostSlug = ref<string | null>(initialRoute.slug);
 
-function resolveInitialPage(): "home" | "blog" {
-  if (typeof window === "undefined") return "home";
-  const hash = window.location.hash.replace("#", "").toLowerCase();
-  return hash === "blog" ? "blog" : "home";
+function parseHash(): { page: "home" | "blog"; slug: string | null } {
+  if (typeof window === "undefined") return { page: "home", slug: null };
+  const rawHash = window.location.hash.replace(/^#/, "");
+  if (!rawHash) return { page: "home", slug: null };
+
+  const [segment, ...rest] = rawHash.split("/");
+  const page = segment?.toLowerCase() === "blog" ? "blog" : "home";
+  const slug = page === "blog" ? rest.join("/") || null : null;
+  return { page, slug };
 }
 
-function syncHashFromState(page: "home" | "blog") {
+function syncHashFromState() {
   if (typeof window === "undefined") return;
   const { pathname, search, hash } = window.location;
+  const slug = activePage.value === "blog" ? activePostSlug.value : null;
+  const targetHash = activePage.value === "blog" ? (slug ? `#blog/${slug}` : "#blog") : "";
+  const target = `${pathname}${search}${targetHash}`;
   const current = `${pathname}${search}${hash}`;
-  const target = page === "blog" ? `${pathname}${search}#blog` : `${pathname}${search}`;
   if (current === target) return;
   window.history.replaceState(null, "", target);
 }
 
 function handleHashChange() {
-  const next = resolveInitialPage();
-  if (next !== activePage.value) {
-    activePage.value = next;
+  const { page, slug } = parseHash();
+  if (page !== activePage.value) {
+    activePage.value = page;
+  }
+  if (slug !== activePostSlug.value) {
+    activePostSlug.value = slug;
   }
 }
 
@@ -84,8 +96,8 @@ function toggleTheme() {
 
 watch(
   activePage,
-  (page) => {
-    syncHashFromState(page);
+  () => {
+    syncHashFromState();
     scheduleIdle(() => {
       if (typeof window !== "undefined") {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -93,6 +105,15 @@ watch(
     }, 300);
   },
   { immediate: true },
+);
+
+watch(
+  activePostSlug,
+  () => {
+    if (activePage.value === "blog") {
+      syncHashFromState();
+    }
+  },
 );
 
 onMounted(() => {
@@ -304,7 +325,7 @@ watch(
       </main>
       <main v-else key="blog" class="flex flex-1 flex-col pb-24 pt-10">
         <div class="mx-auto w-full max-w-6xl px-6">
-          <BlogPage />
+          <BlogPage v-model:selectedSlug="activePostSlug" />
         </div>
       </main>
     </Transition>

@@ -109,18 +109,45 @@ import LiquidBackground from "@/components/LiquidBackground.vue";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { useBlogPosts } from "@/lib/posts";
 
+const props = withDefaults(
+  defineProps<{ selectedSlug?: string | null }>(),
+  { selectedSlug: null },
+);
+
+const emit = defineEmits<{
+  (event: "update:selectedSlug", value: string | null): void;
+}>();
+
 const posts = useBlogPosts();
-const selectedSlug = ref<string | null>(null);
+const selectedSlug = ref<string | null>(props.selectedSlug ?? null);
+
+watch(
+  () => props.selectedSlug,
+  (value) => {
+    if (value === selectedSlug.value) return;
+    selectedSlug.value = value ?? null;
+  },
+);
+
+function updateSelection(next: string | null) {
+  if (selectedSlug.value === next) return;
+  selectedSlug.value = next;
+  emit("update:selectedSlug", next);
+}
 
 watch(
   posts,
   (collection) => {
     if (!collection.length) {
-      selectedSlug.value = null;
+      updateSelection(null);
       return;
     }
     if (!collection.some((item) => item.slug === selectedSlug.value)) {
-      selectedSlug.value = collection[0]?.slug ?? null;
+      updateSelection(collection[0]?.slug ?? null);
+      return;
+    }
+    if (selectedSlug.value === null) {
+      updateSelection(collection[0]?.slug ?? null);
     }
   },
   { immediate: true },
@@ -132,7 +159,7 @@ const colorMode = useColorMode();
 const isDark = computed(() => colorMode.value === "dark");
 
 function selectPost(slug: string) {
-  selectedSlug.value = slug;
+  updateSelection(slug);
 }
 
 function formatDate(iso: string) {
