@@ -5,6 +5,7 @@ import { Moon, Sun } from "lucide-vue-next";
 import A2BotIntercepts from "@/components/A2BotIntercepts.vue";
 import BlogPage from "@/components/BlogPage.vue";
 
+
 const colorMode = useColorMode();
 const isDark = computed(() => colorMode.value === "dark");
 
