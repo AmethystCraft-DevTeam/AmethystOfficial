@@ -102,6 +102,14 @@ function basicMarkdownToHtml(markdown: string) {
     .replace(/^##\s+(.+)$/gm, '<h2 class="text-2xl font-semibold text-slate-900 dark:text-white">$1</h2>')
     .replace(/^#\s+(.+)$/gm, '<h1 class="text-3xl font-bold text-slate-900 dark:text-white">$1</h1>');
 
+  processed = processed.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, rawText, rawHref) => {
+    const text = rawText.trim();
+    const href = rawHref.trim();
+    if (!href) return `[${rawText}](${rawHref})`;
+    const escapedHref = escapeHtml(href);
+    return `<a class="text-sky-600 underline decoration-sky-500/40 underline-offset-2 transition-colors hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300" href="${escapedHref}" target="_blank" rel="noreferrer noopener">${text}</a>`;
+  });
+
   processed = processed
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-slate-900 dark:text-white">$1</strong>')
     .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em class="text-slate-700 dark:text-slate-200">$1</em>')
